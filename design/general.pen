@@ -2373,5 +2373,8 @@
       "type": "number",
       "value": 56
     }
+  },
+  "imports": {
+    "L": "pencil:shadcn.lib.pen"
   }
 }
