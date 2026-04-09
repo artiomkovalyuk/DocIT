@@ -2,8 +2,18 @@ import { GeminiRepository } from "../../repositories/ai/gemini.repository";
 import { LlamaRepository } from "../../repositories/ai/llama.repository";
 
 export class AIService {
-  private geminiRepo = new GeminiRepository();
-  private llamaRepo = new LlamaRepository();
+  private _geminiRepo: GeminiRepository | null = null;
+  private _llamaRepo: LlamaRepository | null = null;
+
+  private get geminiRepo() {
+    if (!this._geminiRepo) this._geminiRepo = new GeminiRepository();
+    return this._geminiRepo;
+  }
+
+  private get llamaRepo() {
+    if (!this._llamaRepo) this._llamaRepo = new LlamaRepository();
+    return this._llamaRepo;
+  }
 
   /**
    * Prepares prompts and delegates to Gemini
@@ -80,11 +90,9 @@ export class AIService {
       }
     }
 
-    const allRules = [...globalRules, ...templateRules];
-    
     // 3. Construct Context
-    let context = `Instruction: ${params.instruction}\n\n`;
-    
+    context = `Instruction: ${params.instruction}\n\n`;
+
     if (allRules.length > 0) {
       context += "Rules to follow:\n";
       allRules.forEach(rule => {

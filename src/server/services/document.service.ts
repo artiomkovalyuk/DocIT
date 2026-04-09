@@ -4,7 +4,11 @@ import { Document, DocumentSchema } from "../models";
 import { AIService } from "./ai/ai.service";
 
 export class DocumentService {
-  private static ai = new AIService();
+  private static _ai: AIService | null = null;
+  private static get ai() {
+    if (!this._ai) this._ai = new AIService();
+    return this._ai;
+  }
   /**
    * Creates a document from a raw prompt or template.
    */
