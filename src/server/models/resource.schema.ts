@@ -6,7 +6,8 @@ export const ResourceSchema = z.object({
   id: z.string().cuid().optional(),
   name: z.string().min(1, "Resource name is required"),
   type: ResourceType,
-  url: z.string().url().nullable().optional(),
+  source_url: z.string().url().nullable().optional(),
+  file_path: z.string().nullable().optional(),
   content: z.string().nullable().optional(), // Raw content or summary
   created_at: z.date().optional(),
 });

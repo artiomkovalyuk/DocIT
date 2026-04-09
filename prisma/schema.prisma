@@ -57,6 +57,7 @@ model resource {
   name        String
   type        String    // file, url, text
   source_url  String?
+  file_path   String?
   content     String?   // Scraped content or text
   created_at  DateTime @default(now())
 

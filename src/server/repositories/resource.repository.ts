@@ -21,12 +21,17 @@ export class ResourceRepository {
     });
   }
 
+  static async listAll() {
+    return prisma.resource.findMany();
+  }
+
   static async create(data: Resource, document_id?: string) {
     return prisma.resource.create({
       data: {
         name: data.name,
         type: data.type,
-        url: data.url,
+        source_url: data.source_url,
+        file_path: data.file_path,
         content: data.content,
         ...(document_id && {
           documents: {

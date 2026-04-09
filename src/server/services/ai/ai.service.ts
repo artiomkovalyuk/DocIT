@@ -39,6 +39,7 @@ export class AIService {
     resource_ids?: string[];
     files?: { name: string; content: string }[];
     schema?: any;
+    data?: any;
   }) {
     console.log(`[AIService] Generating with context for doc ${params.document_id}...`);
     
@@ -46,9 +47,23 @@ export class AIService {
     
     // 1. Fetch resources (Files)
     const attachedFiles = [...(params.files || [])];
+    const { ResourceRepository } = await import("../../repositories/resource.repository");
+    
+    // Always include all resources from the DB to provide full context
+    const allDBResources = await ResourceRepository.listAll();
+    allDBResources.forEach(r => {
+      if (r.content) {
+        attachedFiles.push({ name: r.name, content: r.content });
+      }
+    });
+
+    // Also include specific resources if requested and not already included
     if (params.resource_ids && params.resource_ids.length > 0) {
-      const { ResourceRepository } = await import("../../repositories/resource.repository");
-      const resources = await Promise.all(params.resource_ids.map(id => ResourceRepository.findById(id)));
+      const resources = await Promise.all(
+        params.resource_ids
+          .filter(id => !allDBResources.some(r => r.id === id))
+          .map(id => ResourceRepository.findById(id))
+      );
       resources.forEach(r => r?.content && attachedFiles.push({ name: r.name, content: r.content as string }));
     }
     

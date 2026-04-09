@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { document_id, instruction, resource_ids, schema } = req.body;
+    const { document_id, instruction, resource_ids, schema, data } = req.body;
     
     if (!instruction) {
       return res.status(400).json({ error: "instruction is required" });
@@ -25,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       document_id: document_id || "global",
       instruction,
       resource_ids,
-      schema
+      schema,
+      data
     });
 
     return res.status(200).json({
