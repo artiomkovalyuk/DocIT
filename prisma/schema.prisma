@@ -10,7 +10,7 @@ datasource db {
 model document {
   id          String   @id @default(cuid())
   title       String
-  content     String?  // The editor content
+  content     Json?    // The editor content structure (stores all elements)
   status      String   @default("draft") // Status enum: draft, published, etc.
   author_id   String?
   created_at  DateTime @default(now())
@@ -18,7 +18,6 @@ model document {
   template_id String?
 
   template    template? @relation(fields: [template_id], references: [id])
-  elements    element[]
   resources   resource[] @relation("DocumentResources")
 
   @@map("documents")
@@ -27,7 +26,7 @@ model document {
 model template {
   id            String   @id @default(cuid())
   name          String
-  content       String?   // JSON string or structure
+  content       Json?     // Detailed template structure
   description   String?
   tags          String?   // Searchable tags
   counter_agent String?   // Target counter-party or organization type
@@ -44,7 +43,7 @@ model rule {
   id          String   @id @default(cuid())
   name        String
   type        String    // e.g. "validation", "logic", "transformation"
-  logic       String?   // The actual rule definition as JSON string
+  logic       String?   // The actual rule definition as string
   template_id String?   // If null, it's a global rule
   created_at  DateTime @default(now())
 
@@ -53,24 +52,11 @@ model rule {
   @@map("rules")
 }
 
-model element {
-  id          String   @id @default(cuid())
-  type        String    // blank, paragraph, image
-  content     String?   // Specific element data as JSON string
-  order       Int
-  document_id String
-  created_at  DateTime @default(now())
-
-  document    document @relation(fields: [document_id], references: [id], onDelete: Cascade)
-
-  @@map("elements")
-}
-
 model resource {
   id          String   @id @default(cuid())
   name        String
   type        String    // file, url, text
-  url         String?
+  source_url  String?
   content     String?   // Scraped content or text
   created_at  DateTime @default(now())
 

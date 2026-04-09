@@ -7,9 +7,6 @@ export class DocumentRepository {
       where: { id },
       include: {
         template: true,
-        elements: {
-          orderBy: { order: "asc" },
-        },
         resources: true,
       },
     });
