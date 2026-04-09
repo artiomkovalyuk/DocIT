@@ -7,15 +7,25 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "turbo": "next dev --turbo"
+    "turbo": "next dev --turbo",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@langchain/community": "^1.1.27",
+    "@langchain/core": "^1.1.39",
+    "@langchain/google-genai": "^2.1.26",
+    "@prisma/client": "^7.7.0",
     "@tailwindcss/postcss": "^4.2.2",
+    "clsx": "^2.1.1",
     "next": "16.2.3",
+    "platejs": "^52.3.21",
     "postcss": "^8.5.9",
+    "prisma": "^7.7.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tailwindcss": "^4.2.2"
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20",

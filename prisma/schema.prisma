@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model document {
+  id          String   @id @default(cuid())
+  title       String
+  content     String?  // The editor content
+  status      String   @default("draft") // Status enum: draft, published, etc.
+  author_id   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  template_id String?
+
+  template    template? @relation(fields: [template_id], references: [id])
+  elements    element[]
+  resources   resource[] @relation("DocumentResources")
+
+  @@map("documents")
+}
+
+model template {
+  id            String   @id @default(cuid())
+  name          String
+  content       String?   // JSON string or structure
+  description   String?
+  tags          String?   // Searchable tags
+  counter_agent String?   // Target counter-party or organization type
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  documents   document[]
+  rules       rule[]
+
+  @@map("templates")
+}
+
+model rule {
+  id          String   @id @default(cuid())
+  name        String
+  type        String    // e.g. "validation", "logic", "transformation"
+  logic       String?   // The actual rule definition as JSON string
+  template_id String?   // If null, it's a global rule
+  created_at  DateTime @default(now())
+
+  template    template? @relation(fields: [template_id], references: [id])
+
+  @@map("rules")
+}
+
+model element {
+  id          String   @id @default(cuid())
+  type        String    // blank, paragraph, image
+  content     String?   // Specific element data as JSON string
+  order       Int
+  document_id String
+  created_at  DateTime @default(now())
+
+  document    document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@map("elements")
+}
+
+model resource {
+  id          String   @id @default(cuid())
+  name        String
+  type        String    // file, url, text
+  url         String?
+  content     String?   // Scraped content or text
+  created_at  DateTime @default(now())
+
+  documents   document[] @relation("DocumentResources")
+
+  @@map("resources")
+}

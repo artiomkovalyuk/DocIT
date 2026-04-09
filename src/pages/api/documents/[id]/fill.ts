@@ -1,0 +1,21 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+import { DocumentService } from "../../../../server/services/document.service";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
+  try {
+    const { raw_text } = req.body;
+    if (!raw_text) return res.status(400).json({ error: "raw_text is required" });
+
+    const updatedDoc = await DocumentService.magicFill(id as string, raw_text);
+    return res.status(200).json(updatedDoc);
+  } catch (error: any) {
+    return res.status(400).json({ error: error.message });
+  }
+}
